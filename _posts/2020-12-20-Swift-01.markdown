@@ -7,19 +7,93 @@ categories: Swift Xcode-9 StanfordLecture
 
 스탠포드 대학 Paul Hegarty 교수님의 Stanford - Developing iOS 11 Apps with Swift 강의를 듣고 정리한 노트입니다. 의역과 오역이 있을 수 있습니다.
 
-영상 출처 : [https://www.youtube.com/watch?v=TZL5AmwuwlA&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=1](https://www.youtube.com/watch?v=TZL5AmwuwlA&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=1)
+**영상 출처** : [https://www.youtube.com/watch?v=TZL5AmwuwlA&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=1](https://www.youtube.com/watch?v=TZL5AmwuwlA&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=1)
 
-강의 아이튠즈 : [https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316](https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316)
+**강의 아이튠즈** : [https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316](https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316)
 
 
-- UIKit : iOS의 UI 프레임워크 (cocoa touch)
+# WHAT IS IOS?
 
-```swift
-class ViewController: UIViewController { ... }
+### iOS
+
+**4개의 계층**으로 이루어져 있다.
+
+- Cocoa touch
+    - *사용자 친화적*
+    - UI 레이어 (버튼, 슬라이더, 카메라, 웹뷰, 지도 등등 모든 UI)
+- Media
+    - 본질적으로 iPod이 아이폰에 들어있는 구조
+    - 모든 종류의 미디어 : 오디오, 비디오, 사진 등등
+- Core Services
+    - `객체 지향 레이어` → 이 강의에서 공부할 내용
+    - 스마트폰 위치 찾기 / 목적지 찾기 / 파일 접근 등
+- Core OS
+    - *하드웨어 친화적*
+    - Unix, C언어 기반
+
+### Platform
+
+- tools : Xcode 9
+- languages : Object-C, `Swift`
+- frameworks
+    - Foundation : Core Data
+    - UIKit : Core Motion, Map kit -> `UI 모든것`
+    - Design Strategy : MVC
+
+## iOS 개발
+
+### Xcode를 실행
+
+- Create new project -> Single New App
+    - Product name : 앱이름
+    - Team : Apple ID로 팀 구성 가능 (무료)
+    - Organization Name : 저작권에 등록
+    - `Organization Identifier` : 고유한 값이어야 함
+    - 저장 경로 : /Home/Developer/ 추천
+- 팁
+    - 상단바 - Xcode - Behaviors.- Edit Behaviors → Xcode 동작 수정 가능
+        - Generate ouput - Show debugger
+        - ![image](https://user-images.githubusercontent.com/48276168/102707106-7f8ab580-42db-11eb-8ffe-c5784d6faa3a.png)
+- App을 실행해보는 방법 2가지 (플레이 버튼)
+    - 실제 디바이스
+        - USB 케이블
+        - wireless
+    - Simulator : 지금 만드는 app 뿐만 아니라 실제 디바이스처럼 다른 app 사용 가능
+
+
+### 프로젝트 디렉토리 구성
+
+```basic
+/project root directory/
+ㄴInfo.plist
+ㄴMainStoryboard
+ㄴViewController.swift
+ㄴSupporting Files
+ㄴㄴAssets.xcassets
+ㄴㄴAppDelegate
+ㄴㄴLaunchScreen.storyboar
 ```
 
-- ViewController : 클래스명
-- UIViewController : 상속한 클래스, UIKit에서 import
+- Info.plist : 꼭 root 아래 있을 것
+- MainStoryboard : UI
+    - Code (x) graphically (o)
+    - ![image](https://user-images.githubusercontent.com/48276168/102707153-c37dba80-42db-11eb-88d5-daff0ee5e80d.png)
+        - Interface builder : 디바이스 화면 선택 가능하고 직접 UI를 드래그해서 구현
+        - utilities panel
+            - object labels : 원하는 UI object들을 선택해서 interface builder에 드래그하기
+            - 수정하고 싶을 때 : object를 더블클릭 - utilities panel에서 수정
+            - object 복사 : 모든 설정이 그대로인 새로운 object 생성
+                - ‼️ 하지만 연결한 swift method (sender)도 복사가 된다!!!
+                - ‼️ 우클릭 - Touch Up Inside : 연결된 method x버튼 - 삭제
+- ViewController.swift : 동작 만들기 (class, method)
+    ```swift
+    /* ViewController.swift */
+    import UIKit
+    class ViewController: UIViewController { ... }
+    ```
+        * UIKit : iOS의 UI 프레임워크 (cocoa touch)
+        * ViewController : 클래스명
+        * UIViewController : 상속한 클래스, UIKit에서 import
 - UI에 동작을 만드는법
     1. 오른쪽 위의 동그라미 두개 버튼을 누른다 (assistant editor)
     2. 스토리보드 + Swift를 동시에 볼 수 있음
