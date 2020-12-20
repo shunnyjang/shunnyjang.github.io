@@ -5,73 +5,12 @@ date:   2020-12-20 +
 categories: Swift Xcode-9 StanfordLecture
 ---
 
-스탠포드 Stanford - Developing iOS 11 Apps with Swift 강의를 듣고 정리한 노트입니다. 의역과 오역이 있을 수 있습니다.
+스탠포드 대학 Paul Hegarty 교수님의 Stanford - Developing iOS 11 Apps with Swift 강의를 듣고 정리한 노트입니다. 의역과 오역이 있을 수 있습니다.
 
 영상 출처 : [https://www.youtube.com/watch?v=TZL5AmwuwlA&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=1](https://www.youtube.com/watch?v=TZL5AmwuwlA&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=1)
 
-```swift
+강의 아이튠즈 : [https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316](https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316)
 
-import UIKit
-
-class ViewController: UIViewController {
-  
-  var filpCard = 0 {
-    didSet {
-      flipCountLabel.text = "Flips: \(flipCount)"
-    }
-  }
-  
-  @IBOutlet weak var flipCountLabel: UILabel!
-
-  # card의 array를 만들자
-  @IBOutlet var cardButtons: [UIButton]!
-  
-  var emojiChoices = ["👻", "🎃", "👻", "🎃"]
-  
-  @IBAction func touchCard (_sender: UIButton) {
-    filpCard += 1
-    # app crash 예방
-    if let cardNumber = cardButtons.index(of: sender)! {
-         flipCard(withEmoji: emojiChoices(cardNumber), on: sender) 
-    } else {
-      print("chosen card was not in cardButtons")
-    }
-  }
-  
-  
-  /*
-  @IBAction func touchCard (_sender: UIButton) {
-    filpCard += 1
-    flipCard(withEmoji: "👻", on: sender)
-    # caller의 관점에서 불러짐
-    # 👻 카드를 클릭하면 카드를 뒤집을 것
-  }
-  
-  # 같은 코드가 반복된다. -> 최악의 코드!
-  @IBAction func touchSecondCard (_sender: UIButton) {
-    filpCard += 1
-    flipCard(withEmoji: "🎃", on: sender)
-  }
-  */
-  
-  
-  func flipCard(withEmoji emoji: String, on button: UIButton) {
-    
-    # print("filpCard(withEmoji: \())", emoji)
-    # print("filpCard(withEmoji: \(emoji))")
-    # \() : string, array, dictionary 모두 출력 가능 
-    
-    if button.currentTitle == emoji {
-      button.setTitle("", for:UIControlState.normal)
-      button.backgroundColor = Color.orange
-    } else {
-      button.setTitle(emoji, for:UIControlState.normal)
-      button.backgroundColor = Color.white
-    }
-}
-
-}
-```
 
 - UIKit : iOS의 UI 프레임워크 (cocoa touch)
 
@@ -99,7 +38,6 @@ class ViewController: UIViewController { ... }
             - Any → 선택하지 말자 다른 코드들 동작 안함
             - UIButton
         - UI method
-
             ```swift
             @IBAction func touchCard (_sender: UIButton) -> Int {}
             ```
@@ -115,7 +53,6 @@ class ViewController: UIViewController { ... }
             - Int : return value type, 없으면 생략 (typehint임)
 
         - function
-
             ```swift
             func flipCard(withEmoji emoji: String, on button: UIButton) { }
             ```
@@ -146,3 +83,67 @@ class ViewController: UIViewController { ... }
             ```
 
             - crash를 두려워하지 말고 버그를 찾자
+
+
+```swift
+/* ViewController.swift */
+import UIKit
+
+
+class ViewController: UIViewController {
+    var filpCard = 0 {
+        didSet {
+            flipCountLabel.text = "Flips: \(flipCount)"
+        }
+    }
+
+    @IBOutlet weak var flipCountLabel: UILabel!
+
+    // card의 array를 만들자
+    @IBOutlet var cardButtons: [UIButton]!
+
+    var emojiChoices = ["👻", "🎃", "👻", "🎃"]
+
+    @IBAction func touchCard (_sender: UIButton) {
+        filpCard += 1
+        // app crash 예방
+        if let cardNumber = cardButtons.index(of: sender)! {
+            flipCard(withEmoji: emojiChoices(cardNumber), on: sender) 
+        } else {
+            print("chosen card was not in cardButtons")
+        }
+    }
+  
+  
+/*
+    @IBAction func touchCard (_sender: UIButton) {
+        filpCard += 1
+        flipCard(withEmoji: "👻", on: sender)
+        # caller의 관점에서 불러짐
+        # 👻 카드를 클릭하면 카드를 뒤집을 것
+    }
+
+    # 같은 코드가 반복된다. -> 최악의 코드!
+    @IBAction func touchSecondCard (_sender: UIButton) {
+        filpCard += 1
+        flipCard(withEmoji: "🎃", on: sender)
+    }
+*/
+
+
+    func flipCard(withEmoji emoji: String, on button: UIButton) {
+
+        // print("filpCard(withEmoji: \())", emoji)
+        // print("filpCard(withEmoji: \(emoji))")
+        // \() : string, array, dictionary 모두 출력 가능 
+
+        if button.currentTitle == emoji {
+            button.setTitle("", for:UIControlState.normal)
+            button.backgroundColor = Color.orange
+        } else {
+            button.setTitle(emoji, for:UIControlState.normal)
+            button.backgroundColor = Color.white
+        }
+    }
+}
+```
