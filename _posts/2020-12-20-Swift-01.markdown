@@ -1,0 +1,145 @@
+---
+layout: post
+title:  "Stanford - Developing iOS 11 Apps with Swift 01"
+date:   2020-12-20 +
+categories: Swift Xcode9 StanfordLecture
+---
+
+```swift
+# 아직은 견고하지 못한 코드다.
+
+import UIKit
+
+class ViewController: UIViewController {
+  
+  var filpCard = 0 {
+    didSet {
+      flipCountLabel.text = "Flips: \(flipCount)"
+    }
+  }
+  
+  @IBOutlet weak var flipCountLabel: UILabel!
+
+  # card의 array를 만들자
+  @IBOutlet var cardButtons: [UIButton]!
+  
+  var emojiChoices = ["👻", "🎃", "👻", "🎃"]
+  
+  @IBAction func touchCard (_sender: UIButton) {
+    filpCard += 1
+    # app crash 예방
+    if let cardNumber = cardButtons.index(of: sender)! {
+         flipCard(withEmoji: emojiChoices(cardNumber), on: sender) 
+    } else {
+      print("chosen card was not in cardButtons")
+    }
+  }
+  
+  
+  /*
+  @IBAction func touchCard (_sender: UIButton) {
+    filpCard += 1
+    flipCard(withEmoji: "👻", on: sender)
+    # caller의 관점에서 불러짐
+    # 👻 카드를 클릭하면 카드를 뒤집을 것
+  }
+  
+  # 같은 코드가 반복된다. -> 최악의 코드!
+  @IBAction func touchSecondCard (_sender: UIButton) {
+    filpCard += 1
+    flipCard(withEmoji: "🎃", on: sender)
+  }
+  */
+  
+  
+  func flipCard(withEmoji emoji: String, on button: UIButton) {
+    
+    # print("filpCard(withEmoji: \())", emoji)
+    # print("filpCard(withEmoji: \(emoji))")
+    # \() : string, array, dictionary 모두 출력 가능 
+    
+    if button.currentTitle == emoji {
+      button.setTitle("", for:UIControlState.normal)
+      button.backgroundColor = Color.orange
+    } else {
+      button.setTitle(emoji, for:UIControlState.normal)
+      button.backgroundColor = Color.white
+    }
+}
+
+}
+```
+
+- UIKit : iOS의 UI 프레임워크 (cocoa touch)
+
+```swift
+class ViewController: UIViewController { ... }
+```
+
+- ViewController : 클래스명
+- UIViewController : 상속한 클래스, UIKit에서 import
+- UI에 동작을 만드는법
+    1. 오른쪽 위의 동그라미 두개 버튼을 누른다 (assistant editor)
+    2. 스토리보드 + Swift를 동시에 볼 수 있음
+
+        ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8f1d3f55-56e0-4d29-96a2-c4c90400a313/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8f1d3f55-56e0-4d29-96a2-c4c90400a313/Untitled.png)
+
+    3. 스토리보드에서 method 적용시키고 싶은 UI object 선택 + `Ctrl`키 + Swift코드로 드래그
+        - Connection
+            - **outlet** : create an instance variable
+            - **action** : create a method
+            - **outlet** **collection** : an array of the thing in the UI
+        - Argument
+            - None
+            - Sender
+        - Type
+            - Any → 선택하지 말자 다른 코드들 동작 안함
+            - UIButton
+        - UI method
+
+            ```swift
+            @IBAction func touchCard (_sender: UIButton) -> Int {}
+            ```
+
+            - @IBAction : Swift 코드 x, xcode적 언어, 해당 라인에 숫자 대신 생긴 동그라미 버튼 클릭하면 어떤 UI object인지 알려줌
+            - func : 클래스의 function임, 클래스 밖에 있을 수도 있음 (global function)
+            - _sender : parameter의 이름 (단수)
+            - UIButton : argument type
+                - 모든 argument는 이름이 있어야 한다. 따라서 argument의 순서를 외우는 게 아니라 이름으로 직접 지정한다.
+                - 이름은 2가지가 존재
+                    - external name = caller use
+                    - internal name = 구현(implement)할 때 사용
+            - Int : return value type, 없으면 생략 (typehint임)
+
+        - function
+
+            ```swift
+            func flipCard(withEmoji emoji: String, on button: UIButton) { }
+            ```
+
+            - function은 `영어`로 읽히도록 작성
+            - 공식문서에 좋은 함수명을 정하는 방법을 읽어볼 것
+            - withEmoji
+                - ( emoji: String) : external name = intername
+                - (_ emoji: String) : argument가 없음 (많이 사용 x)dd
+    4. 클래스/메소드/변수명을 바꾸고 싶은데 이미 UI와 연결되어 있을 때
+        - `command` 키를 눌러서 `rename`
+        - 그냥 바꾸면 UI와의 연결이 끊어진다.
+    5. UI object와 코드(Outlet/Outlet collection)를 연결하는 다른 방법
+
+        ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/354da00c-1595-4a90-9692-fecfc95a9483/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/354da00c-1595-4a90-9692-fecfc95a9483/Untitled.png)
+
+        1. **View** **Controller**라는 디바이스 위의 버튼 클릭
+        2. object에 드래그
+
+        ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d328152b-948f-4005-8dd4-f98668126bc6/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d328152b-948f-4005-8dd4-f98668126bc6/Untitled.png)
+
+        3. 원하는 Outlet/Outlet Collection 선택
+
+        - ‼️ 데이터타입이 optional인데 UI object랑 연결하지 않았을 때 클릭 -> `app crash`
+
+            ```bash
+            fatal error: unexpectedly gound nil while unwrapping an Optional value
+            ```
+
+            - crash를 두려워하지 말고 버그를 찾자
