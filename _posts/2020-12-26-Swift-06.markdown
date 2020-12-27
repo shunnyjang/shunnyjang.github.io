@@ -1,0 +1,55 @@
+# Error
+
+## Error Handling
+에러들은 인자를 받는 대신 에러를 리턴하는 식으로 처리할 수 있다.
+에러를 날릴 수도 있다. -> 다른 언어의 예외처리와 같음 (throw)
+우리가 원하는 결과를 실행해 보고 error가 발생하게 된다면 error을 throw하도록 만드는 것이다.
+### Throw
+```swift
+func save() throws
+do {
+    try context.save()
+} catch let error {
+    throw error
+}
+```
+- let error : 지역번수, 에러가 발생하면 우리에게 날아오는 것. 에러 프로토콜을 구현한 것 (이 변수 타입이 Error 프로토콜의 구현체) - 실제 내용은 아무것도 없음
+
+에러가 날아옴 - 에러를 잡음 - 살펴보고 무엇을 할지 알아봄
+
+```swift
+try! context.save()
+let x = try? errorProneFunctionThatReturnsAnInt()
+```
+- `try!` : 시도해보고 에러가 발생하면 앱 강제종료 - 에러가 나지 않는다고 100% 확신할 때만 사용
+- `try?` : 시도해보고 에러가 나면 엡을 멈추지말고 에러 무시 
+    - int : x => int
+    - int 가 아님 : x => optional int
+
+# Any & AnyObject
+어느 타입도 될 수 있다. 
+Object-C와 호환되는 기능. 하지만 Swift는 타입이 중요하다. 따라서 Swift가 유일하게 있는 예외 - 하위호환을 위해 사용
+구조체, 열거형, 클래스 등 다양한 타입 가능
+Any 타입에게 메세지를 보낼 수 없다. - 무슨 타입인지 알 수 없기 때문에
+
+## Convert (변환)
+```swift
+func prepare(for segue: UIStoryboardSegue, sender: Any?)
+```
+sender : 버튼 (어떤 버튼이 이 MVC를 새로운 MVC로 변환하는지)
+-> 코드때문에 변환되면 nil이 될 것임
+-> Any가 필요한 이유
+함수의 인자로 사용해서 아무 타입이나 전달 가능
+
+## 사용 방법
+이 강의에서는 하위호환 API 호출을 제외하고는 Any사용하는 일이 없을 것임
+반드시 내가 아는 타입으로 바꿔줘야 함!
+`as`를 사용해서 변환
+`as?` : Any 명시
+불가능한 경우 : `nil`
+```swift
+let unknown: Any = ...
+if let foo = unknown as? MyType {
+    ...
+}
+```

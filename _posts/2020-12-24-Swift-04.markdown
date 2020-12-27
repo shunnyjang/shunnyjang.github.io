@@ -1,0 +1,188 @@
+---
+layout: post
+title:  "Stanford - Developing iOS 11 Apps with Swift 04 : Swift Programming Language"
+date:   2020-12-24 +
+categories: Swift Xcode-9 StanfordLecture
+---
+스탠포드 대학 Paul Hegarty 교수님의 Stanford - Developing iOS 11 Apps with Swift 강의를 듣고 정리한 노트입니다. 커넥트재단에서 올려준 번역 자막 영상 덕분에 수월하게 강의를 들었습니다. ㅠ_ㅠ
+<br/>
+
+***
+
+
+**영상 출처** : [https://www.youtube.com/watch?v=VIEzNBPmQKk&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=4](https://www.youtube.com/watch?v=VIEzNBPmQKk&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=4)
+
+**강의 아이튠즈** : [https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316](https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316)
+
+**번역 영상** : [https://www.youtube.com/watch?v=VIEzNBPmQKk&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=4](https://www.youtube.com/watch?v=VIEzNBPmQKk&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=4)
+<br/>
+
+***
+<br/>
+
+# 지난 시간 demo 마무리
+
+## 아이폰의 네면에 잘 고정해주기
+
+1. 파란선이 제안하는 꼭짓점에 놔주기
+
+2. `Ctrl` + `drag` : 위로 올리기
+
+   * ![image-20201219184033657](/Users/sngeunjng/Library/Application Support/typora-user-images/image-20201219184033657.png)
+
+     어떤 관계를 원하는지 선택 -> Top space to Safe Area
+
+     * safe area : 스크린 주변의 경계, 다른 ui와 겹치지 않게 위치
+
+   * ![image-20201219184217933](/Users/sngeunjng/Library/Application Support/typora-user-images/image-20201219184217933.png)
+
+     왼쪽으로 당기기 -> Leading Space to safe area
+
+     오른쪽으로 당기기 -> Trailing Space to safe area 
+
+     * left, right가 아닌 leading, trailing인 이유 : 히브리어/아랍어같은 언어는 오른쪽에서 왼쪽으로 쓰여지고 이런 경우는 ui를 뒤집어야 한다.
+
+   * ![image-20201219184545551](/Users/sngeunjng/Library/Application Support/typora-user-images/image-20201219184545551.png)
+
+     Flips label을 아래로 당기기 -> bottom space to safe area
+
+     빨간 선과 노란 선이 생김 -> warning/error
+
+     * ![image-20201219184651401](/Users/sngeunjng/Library/Application Support/typora-user-images/image-20201219184651401.png)
+     * "flips 라벨의 수평 위치가 규정되지 않았음" -> 끌어다 놓은 것만으로는 규정한 것이 아님
+     * Ctrl + drag - 백그라드로 당기기 -> `Center Horizontally in safe area` -> 중앙에 위치
+
+3. 경고 고치기
+
+* ![image-20201219184925659](/Users/sngeunjng/Library/Application Support/typora-user-images/image-20201219184925659.png)
+
+* ![image-20201219184936894](/Users/sngeunjng/Library/Application Support/typora-user-images/image-20201219184936894.png)
+
+  어떤 문제가 있는지 알려줌
+
+* ![image-20201219185006265](/Users/sngeunjng/Library/Application Support/typora-user-images/image-20201219185006265.png)
+* 적당한 걸 선택하고 -> `Fix Misplacement`
+
+4. UI와 UI간의 상대적인 거리 제약
+
+   ![image-20201219185156692](/Users/sngeunjng/Library/Application Support/typora-user-images/image-20201219185156692.png)
+
+   Vertical spacing
+
+==> 화면이 커지거나 회전해도 제약사항을 잘 지킨다.
+
+
+# Swfit Language
+
+## Range
+
+floating point : 스위프트에서는 countable range가 아니다 -> 그 범위 안에서 어떻게 세어야하는지 모름
+
+`stride` : from , through, to, from, by
+
+셀 수 있는 범위를 생성해준다 -> 부동 소수점, 문자열의 인수 등 모든걸 셀 수 있게 한다.
+
+## Tuple
+
+메소드나 변수가 없는 소형 구조체, 값만 들어온다.
+
+가벼워서 한 줄에 모든 걸 정의
+
+튜플은 인덱스를 지원하지 않는다 -> 이름이 있기 때문, 인덱스는 배열 이용
+
+```swift
+let x: (String, Int, Double) = ("hello", 5, 0.85)
+```
+
+장점
+* 요소의 이름을 유연하게 저장할 수 있다 -> 튜플의 요소를 꺼내면서 이름 설정 가 
+
+```swift
+let (word, number, value) = x
+```
+* 이름과 타입을 모두 정할 수 있다 -> 그리고 이름을 다시 정할 수 있다.
+
+```swift
+let x: (w: String, i:Int, v: Double) = ("hello", 5, 0.85)
+x.w
+x.i
+x.v
+let (wrd, num, val) = x
+```
+* 어떤 것들을 하나로 묶을 때 굉장히 가볍고 원하는 만큼 리턴할 수 있다.
+
+## Computed Properties
+계산된 속성
+
+```swift
+var foo: Double {
+    get {
+        // return the calculated value of foo
+    }
+    set (newValue) {
+        // do something based onthe fact that foo has changed to new Value
+    }
+}
+```
+
+- foo를 요청할 때마다 get 실행 -> 필수o
+- foo에 새로운 값이 할당될 때마다 set 실행 -> 필수x 
+  ​	-> set만 필요하다면 function을 만들 것
+- 읽기전용 속성을 가질 땐 get이 필요 없다.
+
+    ```swift
+    /* ViewController.swift */
+    // lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.coun + 1) / 2)
+    lazy var game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
+
+    // 읽기 전용 속성은 get을 가질필요 없다.
+    /*var numberOfPairsOfCards: Int {
+        get {
+            return (cardButtons.count + 1) / 2
+        }
+    }*/
+    var numberOfPairsOfCards: Int {
+        return (cardButtons.count + 1) / 2
+    }
+    ```
+- set에 변수를 적지 않으면 기본값은 newValue이다.
+```swift
+/* ViewController.swift */
+var cards = [Card]()
+var indexOfTheOneAndOnlyFaceUpCard: Int? {
+    get {
+        var foundIndex: Int? = nil
+        for index in cards.indices {
+            if cards[index].isFaceUp {
+                if foundOne == nil {
+                    foundIndex = index
+                } else {        // 앞면이 두 장이면 indexOfTheOneAndOnlyFaceUpCard == nil이다
+                    return nil
+                }
+            }
+        }
+        return foundIndex
+    }
+    set {   // 방금 설정된 새로운 값을 제외하고 모두 뒷면으로 돌리기
+        for index in cards.indicies {
+            cards[index].isFaceUp = (index == newValue) // True of False
+        }
+    }
+}
+```
+- set 변수 이름을 바꿔줄 수 있다.
+    ```swift
+    /* ViewController.swift */
+    var cards = [Card]()
+    var indexOfTheOneAndOnlyFaceUpCard: Int? {
+        get {
+
+        }
+        set(index) {
+
+        }
+    }
+    ```
+- 어떠한 상황에 변수를 만들고 어떠한 상황에 인덱스를 가지고 오고, 값을 설정하기 위해 두 개의 메소드를 만드는가?
+-> "해당 작업이 속성으로 인식되는가"에 따라 다르다
+

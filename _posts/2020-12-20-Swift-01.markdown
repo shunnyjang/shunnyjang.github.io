@@ -1,16 +1,23 @@
 ---
 layout: post
-title:  "Stanford - Developing iOS 11 Apps with Swift 01"
+title:  "Stanford - Developing iOS 11 Apps with Swift 01 : Introduction to iOS"
 date:   2020-12-20 +
 categories: Swift Xcode-9 StanfordLecture
 ---
 
 스탠포드 대학 Paul Hegarty 교수님의 Stanford - Developing iOS 11 Apps with Swift 강의를 듣고 정리한 노트입니다. 의역과 오역이 있을 수 있습니다.
+<br/>
+
+***
+
 
 **영상 출처** : [https://www.youtube.com/watch?v=TZL5AmwuwlA&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=1](https://www.youtube.com/watch?v=TZL5AmwuwlA&list=PL3d_SFOiG7_8ofjyKzX6Nl1wZehbdiZC_&index=1)
 
 **강의 아이튠즈** : [https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316](https://itunes.apple.com/kr/course/developing-ios-11-apps-with-swift/id1309275316)
+<br/>
 
+***
+<br/>
 
 # WHAT IS IOS?
 
@@ -91,15 +98,14 @@ categories: Swift Xcode-9 StanfordLecture
     import UIKit
     class ViewController: UIViewController { ... }
     ```
-        * UIKit : iOS의 UI 프레임워크 (cocoa touch)
-        * ViewController : 클래스명
-        * UIViewController : 상속한 클래스, UIKit에서 import
+    - UIKit : iOS의 UI 프레임워크 (cocoa touch)
+    - ViewController : 클래스명
+    - UIViewController : 상속한 클래스, UIKit에서 import
+
 - UI에 동작을 만드는법
     1. 오른쪽 위의 동그라미 두개 버튼을 누른다 (assistant editor)
     2. 스토리보드 + Swift를 동시에 볼 수 있음
-
         ![image](https://user-images.githubusercontent.com/48276168/102706783-43a22100-42d8-11eb-9f29-478d745a756a.png)
-
     3. 스토리보드에서 method 적용시키고 싶은 UI object 선택 + `Ctrl`키 + Swift코드로 드래그
         - Connection
             - **outlet** : create an instance variable

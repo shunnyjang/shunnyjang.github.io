@@ -1,0 +1,255 @@
+ 
+
+## 클래스 --> 구조체
+클래스를 구조체로 수정하면...
+* 속성에 부여할 수 없고 `self.`는 변경할 수 없다.
+    -> 함수가 `mutating`이라고 표시되어 있지 않기 때문!
+    ```swift
+    mutating func chooseCard(at index: Int){ ... }
+    ```
+    -> var의 get과 set은 이미 swift가 항상 알기 때문에 `mutating`을 붙일 필요 X
+        -> 외부는 읽기 전용이지만 우리는 쓰기 가능!
+        -> 만약 `let`이라면 수정 불가능
+
+* 클래스가 아니라 구조체가 필요한 이유
+    * 구조체는 값 타임 -> 힙 내부에 존재하지 X -> 전달할 때 계속 복제 -> 스위프트는 그 대신 내용이 변경되었을 때만 복사 -> copy-on-write-semanstic
+
+# Protocols
+기본적으로 별도의 구현이 없는 메소드와 변수의 리스트
+## 프로토콜이란?
+API에서 원하는 것을 불러오는 방식
+어떤 구조체, 열거항, 클래스든 전달 가능
+그걸 받는 메소드는 원하는 것이 무엇인지 알 수 있다
+`양쪽에서 원하는 것을 전달 가능!`
+어떤 구현이 아니라 그저 리스트
+호출자와 피호출자가 필요한 것을 표현하는 방식에 달려 있음
+## 유용한 부분
+API를 더 유연하고 더 잘 이해할 수 있도록 함 -> 블라인드 구조에서 더 효과적
+    - 뷰와 컨트롤러의 통신(should, will, did)이 모두 블라인드 상태) -> 프로토콜이 할 수 있게 해주고 권한을 주는데 유용하다
+    - ex) 딕셔너리(해쉬 테이블) `키`가 전부 구별된다는 것 -> 프로토콜은 딕셔너리를 정의할 때 구별되지 않는 키를 사용하지 못하도록 해준다. `구별 가능함에 대한 권한`
+서로 다른 타입끼리 기능을 공유하는데 유리함
+    - 객체 지향에서 상속을 이용하지 않을 때 (기본 클래스를 공유하지 않을 때) : 집합(문자열, 계수 가능 범위 등등)들이 유사점을 공유할 때 동일한 클래스로부터 상속받을 필요는 없게 해줌
+다중 상속을 제공
+    - 변수와 함수의 선언만 하기 때문에 저장 공간이 따로 없고 데이터 상속이 없다 -> 기능의 상속만을 제공
+## 다시 말해 프로토콜이란..
+그냥 하나의 타입이다 : `일급타입`
+1. 프로토콜의 선언
+리턴값을 가지는 메소드와 변수의 리스트
+2. 클래스나 구조체나 열거형이 프로토콜의 메소드와 변수를 구현한다
+-> 프로토콜을 구현하는 요청이 있음
+-> 프로토콜 리스트에 있는 메소드를 구현하려고 할 것 임 : 클래스나 구조체나 열거형이라서 요청해야 함
+3. 그 안에 있는 코드 : 프로토콜의 메소드와 변수를 구현하는 클래스나 구조체나 열거형(enum)
+- 변수 : 계산된 변수가 아닐 때 구조체나 열거형이나 클래스 안에 있게 됨 - 유일하게 저장 공간이 있는 곳이기 때문에
+
+## 프로토콜을 선언하는 법
+클래스의 선언과 유명하다
+```swift
+protocol SomeProtocol : class, InheritedProtocol, InheritedProtocol2 {
+    var someProperty : Int { get set }
+    func aMethod(arg1: Double, anotherArgumnet: String) -> SomeType
+    mutating func changeIt()
+    init(arg: Type)
+}
+```
+- `SomeProtocol` : 프로토콜의 이름
+- `InheritedProtocol` : 상속받는 다른 프로토콜
+    - SomeProtocol을 구현하기 위해서는 InheritedProtocol과 InheritedProtocol2를 모두 구현해야 한다.
+    - SomeProtocol이 다른 프로토콜의 구현 조건을 상속 받는다.
+- 프로토콜에는 코딩이 필요 없다 -> 순수한 `선언`
+- 프로토콜 내에 있는 어떤 메소드던 구조체에 의해 구현 되어서 수정된다면 `mutating` 표시를 해주어야 한다.
+    - 스위프트는 구현하려는 것이 바뀐다는 것을 알고 있어야 한다.
+    - (trick) 프로토콜이 절대 구조체에서 구현되지 않을 것을 안다면! -> `mutating` 표시 필요 없음. 클래스만 받는 프로토콜임을 표시해야 함. -> `: class`
+- `init` : 클래스나 구조체를 이용해서 구현할 때 init을 해주어야 함
+
+
+### 클래스나 구조체가 프로토콜을 구현하는 방법
+#### class
+```swift
+class SomeClass : SuperClassOfSomeClass, SomeProtocol, AnotherProtocol {
+    // must include all the properties and methods in SomeProtocol & AnotherProtocol
+}
+```
+- `SomeProtocol` : 슈퍼 클래스 뒤에 구현하고자 하는 프로토콜 나열
+#### Enum, Struct
+```swift
+enum SomeEnum : SomeProtocol, AnotherProtocol {
+    // must include all the properties and methods in SomeProtocol & AnotherProtocol
+}
+```
+- `SomeProtocol` : Enum또는 Struct뒤에 원하는 프로토콜을 넣으면 됨
+- 프로토콜 내에 inint이 있고 클래스로 구현하려면 `required` 표시를 해줘야 함
+    - 서브 클래스가 따라오는 것을 원치 않기 때문에
+    - 서브클래스가 init을 받아서 슈퍼클래스에서 init이 돌아가지 않을 수도 있음
+    - 서브클래스는 더 이상 이 프로토콜을 구현하지 않지만, 슈퍼클래스가 되므로 가능하다고 생각할 수 있다! -> 그래서 모든 서브클래스도 모두 따라야 하므로 `required` 요구
+<br/>
+- 소스 파일러가 프로토콜의 메소드와 변수를 구현했는지 확인함
+- 몇 개의 프로토콜이던 상관 없음 (다중 상속)
+- 프로토콜을 적합하게 구현하기 위해 `extension` 사용 가능 -> 클래스나 구조체에서도 사용 가능
+    - arc4random을 정수형에 extension
+    - 익스텐션 내용에 프로토콜의 변수와 메소드의 구현을 넣어줌
+    - 그저 코드를 정리하기 위해 쓰는 경우 or 프로토콜 전체 구현
+
+`프로토콜의 모든 메소드와 변수는 의무적으로 필요하다.`
+따라서 프로토콜을 구현하려면 - 모든 메소드, 변수를 다 구현해야 함
+
+프로토콜 선언 앞에 decoration 써줌
+```swift
+@objc
+```
+- 스위프트 프로토콜이 아닌 object-C의 프로토콜처럼 사용 가능
+    - (비교) object-C : 프로토콜에서 메소드는 선택적임(optional)
+    --> 메소드 구현이 선택적(optional)로 바뀜
+`delgation의` 경우가 블라인드 형식의 뷰와 컨트롤러 사이의 커뮤니케이션을 위해 `object-C`의 프로토콜을 사용한다.
+
+## 프로토콜 예시
+```swift
+protocol Moveable {
+    mutating func move(to point: CGPoint)
+}
+
+class Car : Moveable {
+    func move(to point: CGPoint) { ... }    // class는 참조 타입이라서 mutating 불필요
+    func changeOil()
+}
+
+struct Shape : Moveable {
+    mutating func move(to point: CGPoint) { ... }
+    func draw()
+}
+
+let prius: Car = Car()
+let square: Shape = Shape()
+
+// prius를 move 시켜주자
+var thingToMove: Moveable = prius
+thingToMove.move(to: ...)   // Car의 move(to: ...) 실행
+// thingToMove.changeOil() -> Moveable이기 때문에 불가능! move만 가능
+
+thigToMove = square
+thingToMove.move(to: ...) // Square의 move(to: ...) 실행
+let thingsToMove: [Moveable] = [prius, square]
+
+func slid(slider: Moveable) {
+    let positionToSlideTo = _
+    slider.move(to: positionToSlideTo)
+}
+
+slier(prius)
+slider(square)
+
+func slipAndSlide(x: Slippery & Moveable) { ... }
+// slipAndSlide(prius) -> prius가 Slippery가 아니기 때문에
+```
+- **클래스는 참조타입이라서 `mutating`이 필요 없다!**
+- **스위프트는 thingToMove를 `Moveable`라고 알고 있기 때문에 `changeOil`이 불가능하다!**
+- Moveable로 배열을 만들어 prius와 square을 넣을 수 있다
+-> prius와 square은 완전 다르다.
+- `&` : 여러 개의 프로토콜을 사용하는 방법
+
+## 용도
+굉장히 많이 사용된다.
+1. Delegation
+어떻게 블라인드로 아무것도 모르고 통신하는게 가능한가? -> `protocol`
+`will`, `did`, `should`, `data at`
+
+1. 스크롤뷰/테이블뷰 같이 델리게이션 프로토콜 선언 - 보내고자 하는 것이 담겨 있다.
+2. 자기 안에 변수를 생성 - 공개변수, weak속성, optional, 프로토콜을 속성으로 가짐
+3. 뷰가 will, did, should을 보내고 싶을 때 그 변수에 보내면 된다. - 해당하는 프로토콜을 가지고 있기 때문에 모든 will, did, should을 이해할 수 있다.
+4. 컨트롤러가 이 스크롤뷰 델리게이트 프로토콜을 구현해서 클래스 안에 입력한다.
+5. #2를 이용해 자기 자신을 그 델리게이트 변수로 설정한다. (델리게이트 변수가 자기자신이라 하는 것)
+    - 자신을 델리게이트로 설정하는 것은 문제 없음 : 컨트롤러가 델리게이트를 구현하기로 선언했고 델리게이트는 그 프로토콜을 타입으로 가지기 때문!
+6. 컨트롤러는 프로토콜의 모든 메소드를 구현해야 한다. optional이 아닌 것만 구현하면 된다. (컨트롤러는 메소드를 구현함으로써 성공적으로 구현되었음을 선언한다.)
+
+-> 이제는 뷰가 컨트롤러와 섞이게 된다.뷰터 원하는 모든 것들 전달 가능 - 어떤 클래스/구조체에서 이루어지는지 알 수 X 오직 프로토콜을 구현하기 때문에 will, did, should을 델리게이트에 보낼 수 있다는 것만 알 수 있다.
+
+### iOS 어디서는 볼 수 있는 메카니즘이다.
+object-C에서 디자인된 것이고 swift에는 `closure`가 있다.
+
+### Delegation
+```swift
+// UI Scroll View
+weak var delegate: UIScrollViewDelegate?
+
+@objc protocol UIScrollViewDelegae {
+    optional func scrollViewDidScroll(scrollView: UIScorllView)
+    optional func viewForZooming(in scrollView: UIScrollView) -> UIView
+    // ... 15개정도 ...
+}
+
+class MyViewController: UIViewController, UIScrollViewDelegae { ... }   
+
+// 아울렛 설정
+// scrollViewdml @IBOutlet didset 안에서 컨트롤러는
+scrollView.delegate = self
+```
+-  `weak` : 뷰는 컨트롤러를 가리키는 포인터를 가진다. 컨트롤러는 뷰를 가리키는 많은 포인터가 있음 (힙 안에) 뷰가 하고 싶은 것은 자신의 will, did, should을 받는 것을 가리키는 것이다. -> 힙을 빠져나가려 하면 nil로 설정하고 메시지를 보내지 않으면 된다. 뷰는 더 이상 컨트롤러를 힙 안에 가두지 않음
+- `UIScrollViewDelegae` : 프로토콜의 형식, 여러 함수들을 가지고 있음
+- `MyViewController` : UIScrollViewDelegae를 마지막에 넣어서 그 프로토콜을 구현한다고 알려준다.
+
+-> 이렇게 뷰가 will, did등을 컨트롤러에게 보낼 수 있는 것 : `delegation`
+-> 프로토콜의 가장 두드러진 용도
+
+#### 해쉬테이블 (딕셔너리)
+
+```swift
+protocol Hashable: Equatable {
+    var hashValue: Int { get }
+}
+
+protocol Equatable {
+    static func ==(lhs: Self, rhs: Self) -> Bool
+}
+```
+해쉬테이블은 Equatable에서 오는 것
+하나의 변수만 있는 굉장히 간단한 프로토콜
+받기 전용 변수 -> 해쉬 값 - 고유한 어떤 것을 나타내는 하나의 정수
+- `==` : 연산자가 아닌 Equatable protocol을 사용한다.
+
+해시 가능하다 = 딕셔너리의 키가 될 수 있다.
+```swift
+Dictionary<Key: Hashtable, Value>
+```
+키는 해쉬가능해야 한다.
+
+## 다중상속
+`CountableRange` : 많은 프로토콜을 구현한다. 
+- Sequence : next() 메소드로 어떤 것이든 `for in`을 만든다.
+- Collection : 색인(indexOf), 첨자 같은 것들이 있다.
+-> 필요한 이유 : 배열도 같은 것을 구현하고 딕셔너리나 세트도 구현한다. 모든 클래스들은 동일한 것을 구현하기 때문에 하나를 이용해 다른 곳에도 사용 가능
+
+**프로토콜은 메소드에 대한 기본 구현 제공** : 모든 클래스에서 쓰일 수 있는 indexOf를 한 군데에서만 구현해도 모든 클래스에서 쓰일 수 있음
+-> 마치 다중상속처럼 보인다.
+-> **프로토콜의 `extension`에 구현한다.** : 얼마든지 다른 프로토콜의 메소드를 구현할 수 있다.
+- 구현할 수 있는 메소드ㄹ는 프로토콜이나 상속없는 프로토콜이다.
+
+배열과 세트와 딕셔너리와 계수가능 범위는 모두 forEach(), contains(), joined(), min(), max(), filter() 등을 공유한다.
+
+## functional programming
+var, let, 포로토콜을 이용한 제약, 익스텐션 -> `함수형 프로그래밍`을 지원한다
+스위프트는 객체지향 프로그래밍과 함ㅎ수형 프로그래밍을 모두 제공한다.
+딕셔너리, 배열 등이 함수형 프로그래밍을 제공한다.
+
+## String
+character in a string
+ex) cafe
+- ASCII : 4 (C-A-F-E)
+- Unicode : 5 (C-A-F-E-악센트)
+-> 문자열을 정수로 색출할 수 없다.
+문자열은 정수로 색인하지 않고 특수한 타입으로 색인한다. -> `String.index`
+일단 인덱스를 받으면 정수로 상쇄될 수 있다.
+
+```swift
+let pizzaJoint = "cafe pesto"
+let firstCaaracterIndex = pizzaJoin.startIndex
+let fourthCharacterIndex = pizzaJoint.index(firstCaaracterIndex, offsetBy: 3)
+let fourthCharacter = pizzaJoin[fourthCharacterIndex]
+
+if let firstSpace = pizzaJoint.index(of: " "){
+    let secondWordIndex = pizzaJoin.index(firstSpace, offsetBy: 1)
+    let secondWord = pizzaJoint[secondNumberIndex..<pizzaJoint.endIndex>]
+}
+```
+
+
+
+# Closures
